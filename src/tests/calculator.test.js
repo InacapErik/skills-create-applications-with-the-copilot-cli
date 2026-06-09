@@ -6,7 +6,7 @@ function runCmd(args) {
   return res;
 }
 
-describe('CLI calculator (add, sub, mul, div)', () => {
+describe('CLI calculator (basic and extended operations)', () => {
   test('add 2 3 => 5', () => {
     const r = runCmd(['add', '2', '3']);
     expect(r.status).toBe(0);
@@ -43,8 +43,45 @@ describe('CLI calculator (add, sub, mul, div)', () => {
     expect(r.stderr).toMatch(/operands.*valid numbers/i);
   });
 
-  test('unknown operation returns error', () => {
+  // Extended operations
+  test('mod 5 2 => 1', () => {
+    const r = runCmd(['mod', '5', '2']);
+    expect(r.status).toBe(0);
+    expect(r.stdout.trim()).toBe('1');
+  });
+
+  test('modulo by zero returns error', () => {
+    const r = runCmd(['mod', '5', '0']);
+    expect(r.status).not.toBe(0);
+    expect(r.stderr).toMatch(/modulo by zero/i);
+  });
+
+  test('pow 2 3 => 8', () => {
     const r = runCmd(['pow', '2', '3']);
+    expect(r.status).toBe(0);
+    expect(r.stdout.trim()).toBe('8');
+  });
+
+  test('power alias "power" 2 3 => 8', () => {
+    const r = runCmd(['power', '2', '3']);
+    expect(r.status).toBe(0);
+    expect(r.stdout.trim()).toBe('8');
+  });
+
+  test('sqrt 16 => 4', () => {
+    const r = runCmd(['sqrt', '16']);
+    expect(r.status).toBe(0);
+    expect(r.stdout.trim()).toBe('4');
+  });
+
+  test('sqrt of negative number returns error', () => {
+    const r = runCmd(['sqrt', '-9']);
+    expect(r.status).not.toBe(0);
+    expect(r.stderr).toMatch(/square root of negative/i);
+  });
+
+  test('unknown operation returns error', () => {
+    const r = runCmd(['foobar', '1', '2']);
     expect(r.status).not.toBe(0);
     expect(r.stderr).toMatch(/unknown operation/i);
   });
